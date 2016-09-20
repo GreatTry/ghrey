@@ -1,0 +1,179 @@
+
+<input type="file" id="fileinput" />
+<script type="text/javascript">
+  function readSingleFile(evt) {
+  	/*
+  	Весь неработающий в результате експеримента код
+  	удален. По-этому большой части кода нет.
+  	Ну это так заранее просто.
+
+  	window.draw_all(КОЛОНКИ, РЯДИ); - рисует сетку
+  	window.draw_city({x: 1,y: 1, img: "#.png",id: 0});- функцыя захватывает зону
+  	id - это номер игрока с помошью него счиатем потои
+  	window.count(); - считает захватаные територии(ну тоесть должна в итоге)
+  	Кстати сдесь ходы не считываются из файла ещё
+  	*/
+    var f = evt.target.files[0]; 
+
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+	       contents = e.target.result;
+	       conts = contents.split('\n');//conts - массив со строками из файла
+	      par=conts[0].split(' ');//делим первую строку на части
+	      Se.width = par[0];
+	      Se.height = par[1];
+	      window.draw_all(parseInt(par[1]),parseInt(par[0]));//рисуем сетки по параматрам из файла
+	      window.draw_city(city[2]);
+      }
+      r.readAsText(f);
+    } else { 
+      alert("Failed to load file");
+    }
+  }
+
+  document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+</script>
+<script src="crafty.js"></script>
+<script>
+var city = [];
+Se = {
+h: 83,
+w: 102,
+width: 5,
+height: 5
+}
+img1 = "water_plate.png";
+city[1] = {};
+city[1].x = 1;
+city[1].y = 3;
+city[1].count = 0;
+city[1].img = "water_plate.png";
+city[1].id = 1;
+
+city[2] = {};
+city[2].x = 3;
+city[2].y = 1;
+city[2].count = 0;
+city[2].img = "plate_red.png";
+city[2].id = 2;
+
+
+var tower = [];
+var t_num = 0;
+var img = [];
+var n;
+var border = 1;
+window.count = function() {
+	for(var j=1;j<Se.width+1;j++) {
+		for(var i=1;i<Se.height+1;i++) {
+		if(img[j][i].id==city[1].id) {
+			city[1].count++;
+		   }
+		   if(img[j][i].id==city[2].id) {
+			city[2].count++;
+		   }
+	    }
+	}
+}
+window.draw_city = function(city) {
+	if(img[city.x][city.y]) {
+img[city.x][city.y].image(city.img);
+img[city.x][city.y].owner = city.id;
+if(img[city.x+1]){
+if(img[city.x+1][city.y]){
+img[city.x+1][city.y].image(city.img);
+img[city.x+1][city.y].owner = city.id;
+}
+}
+if(img[city.x]){
+if(img[city.x][city.y+1]) {
+img[city.x][city.y+1].image(city.img);
+img[city.x][city.y+1].owner = city.id;
+}
+}
+if(img[city.x]){
+if(img[city.x][city.y-1]) {
+img[city.x][city.y-1].image(city.img);
+img[city.x][city.y-1].owner = city.id;
+}
+if(img[city.x-1]){
+if(img[city.x-1][city.y]) {
+img[city.x-1][city.y].image(city.img);
+img[city.x-1][city.y].owner = city.id;
+}
+}
+
+if(img[city.x][city.y].odd==2){
+if(img[city.x-1]) {
+	if(img[city.x-1][city.y-1]) {
+img[city.x-1][city.y-1].image(city.img);
+img[city.x-1][city.y-1].owner = city.id;
+ 		}
+	}
+
+	if(img[city.x+1]) {
+if(img[city.x+1][city.y-1]) {
+img[city.x+1][city.y-1].image(city.img);
+img[city.x+1][city.y-1].owner = city.id;
+	}
+}
+
+}
+else if(img[city.x][city.y].odd==1) {
+if(img[city.x-1]) {
+	if(img[city.x-1][city.y+1]) {
+img[city.x-1][city.y+1].image(city.img);
+img[city.x-1][city.y+1].owner = city.id;
+ 		}
+	}
+
+if(img[city.x+1]) {
+if(img[city.x+1][city.y+1]) {
+img[city.x+1][city.y+1].image(city.img);
+img[city.x+1][city.y+1].owner = city.id;
+	}
+}
+
+	}
+
+}
+
+}
+}
+window.draw_all = function(he,wi) {
+	for(var j = 1;j<wi+1;j++) {
+		img[j] = [];
+		tower[j] = [];
+if(j%2!=0) {
+n = 2;
+}
+else {
+	n = 1;
+}
+	for(var i =1;i<he+1;i++)	{
+
+			 img[j][i] = Crafty.e("2D, DOM, Image")
+               .attr({ w: Se.w, h: Se.h, x: Se.w*j/1.5 , y: Se.h*i+Se.h/n,odd: n,type: "usual",owner: 0})
+                .image("plate.png");
+		} 
+	}
+}
+window.set_tower = function(x,y) {
+	var flei;
+	if(img[x][y].odd==1){flei=1;}else{flei=2;}
+	tower[x][y] = Crafty.e("2D, DOM, Image")
+               .attr({ w: Se.w, h: Se.h, x: Se.w*x/1.5 , y: Se.h*y+Se.h/flei,type: "tower"})
+                .image("tower.png");
+                t_num++;
+}
+window.stay_tower = function(x,y,owner) {	
+window.set_tower(x,y);
+window.draw_city({x:x,y:y,img: city[owner].img,id: owner});
+}
+window.onload = function() {
+	Crafty.init();
+	
+};
+</script>
+
