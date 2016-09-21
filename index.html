@@ -24,7 +24,8 @@
 	      Se.width = par[0];
 	      Se.height = par[1];
 	      window.draw_all(parseInt(par[1]),parseInt(par[0]));//рисуем сетки по параматрам из файла
-	      window.draw_city(city[2]);
+	      var ent = Crafty.e('2D, DOM').attr({x: 500,y: 600});
+              Crafty.viewport.follow(ent, 0, 0);
       }
       r.readAsText(f);
     } else { 
