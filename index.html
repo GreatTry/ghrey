@@ -26,6 +26,11 @@
 	      window.draw_all(parseInt(par[1]),parseInt(par[0]));//рисуем сетки по параматрам из файла
 	      var ent = Crafty.e('2D, DOM').attr({x: 500,y: 600});
               Crafty.viewport.follow(ent, 0, 0);
+                turns = parseInt(par[2]);
+              mode = parseInt(par[3]);
+              cit = conts[1].split(' ');
+              window.draw_city({x:parseInt(cit[0]),y:parseInt(cit[1]),img: city[1].img,id: 1});
+              window.draw_city({x:parseInt(cit[2]),y:parseInt(cit[3]),img: city[2].img,id: 2});
       }
       r.readAsText(f);
     } else { 
