@@ -29,8 +29,14 @@
                 turns = parseInt(par[2]);
               mode = parseInt(par[3]);
               cit = conts[1].split(' ');
-              window.draw_city({x:parseInt(cit[0]),y:parseInt(cit[1]),img: city[1].img,id: 1});
-              window.draw_city({x:parseInt(cit[2]),y:parseInt(cit[3]),img: city[2].img,id: 2});
+                 city[1].x = parseInt(cit[0]);
+              city[1].y = parseInt(cit[1]);
+              city[2].x = parseInt(cit[2]);
+              city[2].y = parseInt(cit[3]);
+              window.draw_city(city[1]);
+              window.draw_city(city[2]);
+              window.set_city(city[1].x,city[1].y,1);
+              window.set_city(city[2].x,city[2].y,2);
       }
       r.readAsText(f);
     } else { 
@@ -164,6 +170,13 @@ else {
                 .image("plate.png");
 		} 
 	}
+}
+window.set_city = function(x,y,owner) {
+	var flei;
+	if(img[x][y].odd==1){flei=1;}else{flei=2;}
+	Crafty.e("2D, DOM, Image")
+               .attr({ w: Se.w, h: Se.h, x: Se.w*x/1.5, y: Se.h*y+Se.h/flei,type: "city"})
+                .image(city[owner].self);
 }
 window.set_tower = function(x,y) {
 	var flei;
