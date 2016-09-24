@@ -1,12 +1,12 @@
-
 <input type="file" id="fileinput" />
 <script type="text/javascript">
+var fi = 0;
+var conts = [];
   function readSingleFile(evt) {
   	/*
   	Весь неработающий в результате експеримента код
   	удален. По-этому большой части кода нет.
   	Ну это так заранее просто.
-
   	window.draw_all(КОЛОНКИ, РЯДИ); - рисует сетку
   	window.draw_city({x: 1,y: 1, img: "#.png",id: 0});- функцыя захватывает зону
   	id - это номер игрока с помошью него счиатем потои
@@ -14,22 +14,23 @@
   	Кстати сдесь ходы не считываются из файла ещё
   	*/
     var f = evt.target.files[0]; 
-
     if (f) {
       var r = new FileReader();
       r.onload = function(e) { 
+      	var water = [],mountains = [];
 	       contents = e.target.result;
 	       conts = contents.split('\n');//conts - массив со строками из файла
-	      par=conts[0].split(' ');//делим первую строку на части
+	      par=conts[fi].split(' ');//делим первую строку на части
 	      Se.width = par[0];
 	      Se.height = par[1];
 	      window.draw_all(parseInt(par[1]),parseInt(par[0]));//рисуем сетки по параматрам из файла
 	      var ent = Crafty.e('2D, DOM').attr({x: 500,y: 600});
               Crafty.viewport.follow(ent, 0, 0);
-                turns = parseInt(par[2]);
+              turns = parseInt(par[2]);
               mode = parseInt(par[3]);
-              cit = conts[1].split(' ');
-                 city[1].x = parseInt(cit[0]);
+              fi++;
+              cit = conts[fi].split(' ');
+              city[1].x = parseInt(cit[0]);
               city[1].y = parseInt(cit[1]);
               city[2].x = parseInt(cit[2]);
               city[2].y = parseInt(cit[3]);
@@ -37,13 +38,29 @@
               window.draw_city(city[2]);
               window.set_city(city[1].x,city[1].y,1);
               window.set_city(city[2].x,city[2].y,2);
+              if(mode>1) {
+              	fi++;
+              	window.set_mountain(conts[fi]);
+              	fi++;
+              	window.set_water(conts[fi]);
+              	fi++;
+              if(mode==3) {
+              	window.read_s(turns*2,fi);
+              }
+              else {
+              	window.read_u(turns*2,fi);
+              }
+          }
+          else {
+          	fi++;
+          	window.read_u(turns*2,fi);
+          }
       }
       r.readAsText(f);
     } else { 
       alert("Failed to load file");
     }
   }
-
   document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
 </script>
 <script src="crafty.js"></script>
@@ -61,16 +78,15 @@ city[1].x = 1;
 city[1].y = 3;
 city[1].count = 0;
 city[1].img = "water_plate.png";
+city[1].self = "city.png";
 city[1].id = 1;
-
 city[2] = {};
 city[2].x = 3;
 city[2].y = 1;
 city[2].count = 0;
 city[2].img = "plate_red.png";
+city[2].self = "city.png";
 city[2].id = 2;
-
-
 var tower = [];
 var t_num = 0;
 var img = [];
@@ -115,7 +131,6 @@ img[city.x-1][city.y].image(city.img);
 img[city.x-1][city.y].owner = city.id;
 }
 }
-
 if(img[city.x][city.y].odd==2){
 if(img[city.x-1]) {
 	if(img[city.x-1][city.y-1]) {
@@ -123,14 +138,12 @@ img[city.x-1][city.y-1].image(city.img);
 img[city.x-1][city.y-1].owner = city.id;
  		}
 	}
-
 	if(img[city.x+1]) {
 if(img[city.x+1][city.y-1]) {
 img[city.x+1][city.y-1].image(city.img);
 img[city.x+1][city.y-1].owner = city.id;
 	}
 }
-
 }
 else if(img[city.x][city.y].odd==1) {
 if(img[city.x-1]) {
@@ -139,18 +152,14 @@ img[city.x-1][city.y+1].image(city.img);
 img[city.x-1][city.y+1].owner = city.id;
  		}
 	}
-
 if(img[city.x+1]) {
 if(img[city.x+1][city.y+1]) {
 img[city.x+1][city.y+1].image(city.img);
 img[city.x+1][city.y+1].owner = city.id;
 	}
 }
-
 	}
-
 }
-
 }
 }
 window.draw_all = function(he,wi) {
@@ -164,12 +173,20 @@ else {
 	n = 1;
 }
 	for(var i =1;i<he+1;i++)	{
-
 			 img[j][i] = Crafty.e("2D, DOM, Image")
                .attr({ w: Se.w, h: Se.h, x: Se.w*j/1.5 , y: Se.h*i+Se.h/n,odd: n,type: "usual",owner: 0})
                 .image("plate.png");
 		} 
 	}
+}
+window.set_tower = function(x,y) {
+	var flei;
+	if(img[x][y].odd==1){flei=1;}else{flei=2;}
+	if(tower[x][y]){return false;}
+	tower[x][y] = Crafty.e("2D, DOM, Image")
+               .attr({ w: Se.w, h: Se.h, x: Se.w*x/1.5, y: Se.h*y+Se.h/flei,type: "tower"})
+                .image("tower.png");
+                t_num++;
 }
 window.set_city = function(x,y,owner) {
 	var flei;
@@ -178,21 +195,44 @@ window.set_city = function(x,y,owner) {
                .attr({ w: Se.w, h: Se.h, x: Se.w*x/1.5, y: Se.h*y+Se.h/flei,type: "city"})
                 .image(city[owner].self);
 }
-window.set_tower = function(x,y) {
-	var flei;
-	if(img[x][y].odd==1){flei=1;}else{flei=2;}
-	tower[x][y] = Crafty.e("2D, DOM, Image")
-               .attr({ w: Se.w, h: Se.h, x: Se.w*x/1.5 , y: Se.h*y+Se.h/flei,type: "tower"})
-                .image("tower.png");
-                t_num++;
-}
 window.stay_tower = function(x,y,owner) {	
 window.set_tower(x,y);
 window.draw_city({x:x,y:y,img: city[owner].img,id: owner});
 }
+window.set_mountain = function(mou) {
+
+}
+window.set_water = function(wat) {
+
+}
+window.read_s = function(co) {
+
+}
+window.read_u = function(co,fg) {
+	var ab;
+if(co%2!=0) {ab = goes(1,co,fg);}
+else{ab = goes(2,co,fg);}
+if(ab!=null){co--;fg++;window.read_u(co,fg);}
+}
+window.cmd = {}
+	window.cmd.init = function() {
+		
+}
+var goes = function(a,b,fg) {
+	if(b==0) {
+	return null;
+		}
+		else {
+	c = conts[fg].split(' ');
+	console.log(conts[fg]);
+	window.stay_tower(parseInt(c[0]),parseInt(c[1]),a);
+	return true;
+        }
+}
 window.onload = function() {
 	Crafty.init();
-	
+	window.cmd.init();
 };
 </script>
-
+<style>
+</style>
