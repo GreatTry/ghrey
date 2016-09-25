@@ -18,7 +18,7 @@ var conts = [];
       var r = new FileReader();
       r.onload = function(e) { 
       	var water = [],mountains = [];
-	       contents = e.target.result;
+	       contents = e.target.result; 
 	       conts = contents.split('\n');//conts - массив со строками из файла
 	      par=conts[fi].split(' ');//делим первую строку на части
 	      Se.width = par[0];
@@ -110,52 +110,68 @@ img[city.x][city.y].image(city.img);
 img[city.x][city.y].owner = city.id;
 if(img[city.x+1]){
 if(img[city.x+1][city.y]){
+	if(img[city.x+1][city.y].type!="city"){
 img[city.x+1][city.y].image(city.img);
 img[city.x+1][city.y].owner = city.id;
 }
 }
+}
 if(img[city.x]){
 if(img[city.x][city.y+1]) {
+	if(img[city.x][city.y+1].type!="city"){
 img[city.x][city.y+1].image(city.img);
 img[city.x][city.y+1].owner = city.id;
 }
 }
+}
 if(img[city.x]){
 if(img[city.x][city.y-1]) {
+	if(img[city.x][city.y-1].type!="city"){
 img[city.x][city.y-1].image(city.img);
 img[city.x][city.y-1].owner = city.id;
 }
+}
 if(img[city.x-1]){
 if(img[city.x-1][city.y]) {
+if(img[city.x-1][city.y].type!="city"){
 img[city.x-1][city.y].image(city.img);
 img[city.x-1][city.y].owner = city.id;
+}
 }
 }
 if(img[city.x][city.y].odd==2){
 if(img[city.x-1]) {
 	if(img[city.x-1][city.y-1]) {
+		if(img[city.x-1][city.y-1].type!="city"){
 img[city.x-1][city.y-1].image(city.img);
 img[city.x-1][city.y-1].owner = city.id;
+}
  		}
 	}
 	if(img[city.x+1]) {
 if(img[city.x+1][city.y-1]) {
+if(img[city.x+1][city.y-1].type!="city"){
 img[city.x+1][city.y-1].image(city.img);
 img[city.x+1][city.y-1].owner = city.id;
+}
 	}
 }
 }
 else if(img[city.x][city.y].odd==1) {
 if(img[city.x-1]) {
 	if(img[city.x-1][city.y+1]) {
+		if(img[city.x-1][city.y+1].type!="city"){
 img[city.x-1][city.y+1].image(city.img);
 img[city.x-1][city.y+1].owner = city.id;
+}
  		}
 	}
 if(img[city.x+1]) {
 if(img[city.x+1][city.y+1]) {
+	if(img[city.x+1][city.y+1].type!="city"){
 img[city.x+1][city.y+1].image(city.img);
 img[city.x+1][city.y+1].owner = city.id;
+}
 	}
 }
 	}
@@ -191,6 +207,7 @@ window.set_tower = function(x,y) {
 window.set_city = function(x,y,owner) {
 	var flei;
 	if(img[x][y].odd==1){flei=1;}else{flei=2;}
+	img[x][y].type = "city";
 	Crafty.e("2D, DOM, Image")
                .attr({ w: Se.w, h: Se.h, x: Se.w*x/1.5, y: Se.h*y+Se.h/flei,type: "city"})
                 .image(city[owner].self);
@@ -210,21 +227,41 @@ window.read_s = function(co) {
 }
 window.read_u = function(co,fg) {
 	var ab;
-if(co%2!=0) {ab = goes(1,co,fg);}
-else{ab = goes(2,co,fg);}
+if(co%2==0) {ab = goes(1,co,fg,2);}
+else{ab = goes(2,co,fg,1);}
 if(ab!=null){co--;fg++;window.read_u(co,fg);}
 }
 window.cmd = {}
 	window.cmd.init = function() {
 		
 }
-var goes = function(a,b,fg) {
+var goes = function(a,b,fg,d) {
 	if(b==0) {
 	return null;
 		}
 		else {
 	c = conts[fg].split(' ');
 	console.log(conts[fg]);
+	if(parseInt(c[0])==city[1].x & parseInt(c[1])==city[1].y || parseInt(c[0])==city[2].x & parseInt(c[2])==city[2].y) {
+		console.log("Sorry there is a city");
+		return null;
+	}
+	if(img[parseInt(c[0])][parseInt(c[1])].owner==d) {
+		console.log("Invalid value");
+		return null;
+	}
+	 if(img[parseInt(c[0])][parseInt(c[1])].owner==0) {
+		if(check_pos(parseInt(c[0]),parseInt(c[1]),a)!=true){
+			console.log("Validate move");
+return null;
+}
+	}
+	if(tower[parseInt(c[0])]){
+		if(tower[parseInt(c[0])][parseInt(c[1])]) {
+			console.log('There is a tower.');
+			return null;
+		}
+	}
 	window.stay_tower(parseInt(c[0]),parseInt(c[1]),a);
 	return true;
         }
@@ -233,6 +270,76 @@ window.onload = function() {
 	Crafty.init();
 	window.cmd.init();
 };
+function check_pos(x,y,a) {
+	if(img[x][y]) {
+
+if(img[x+1]){
+if(img[x+1][y]){
+if(img[x+1][y].owner==a){
+return true;
+}
+}
+}
+if(img[x]){
+if(img[x][y+1]) {
+if(img[x][y+1].owner==a) {
+return true;
+}
+}
+}
+if(img[x]){
+if(img[x][y-1]) {
+	if(img[x][y-1].owner==a) {
+	return true;
+
+}
+}
+}
+if(img[x-1]){
+if(img[x-1][y]) {
+if(img[x-1][y].owner==a) {
+return true;
+}
+}
+}
+if(img[x][y].odd==2){
+if(img[x-1]) {
+	if(img[x-1][y-1]) {
+if(img[x-1][y-1].owner==a) {
+return true;
+ 		}
+ 		}
+	}
+	if(img[x+1]) {
+if(img[x+1][y-1]) {
+
+if(img[x+1][y-1].owner==a) {
+return true;
+	}
+	}
+}
+}
+else if(img[x][y].odd==1) {
+if(img[x-1]) {
+	if(img[x-1][y+1]) {
+if(img[x-1][y+1].owner==a) {
+return true;
+ 		}
+ 		}
+	}
+if(img[x+1]) {
+if(img[x+1][y+1]) {
+if(img[x+1][y+1].owner==a) {
+return true;
+	}
+	}
+}
+	}
+}
+else {
+	return false;
+}
+}
 </script>
 <style>
 </style>
