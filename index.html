@@ -217,10 +217,20 @@ window.set_tower(x,y);
 window.draw_city({x:x,y:y,img: city[owner].img,id: owner});
 }
 window.set_mountain = function(mou) {
-
+aa = mou.split(' ');
+counnt = parseInt(aa[0]);
+for(var i = 1;i<(counnt*2)+1;i+=2) {
+img[parseInt(aa[i])][parseInt(aa[i+1])].type="water";
+img[parseInt(aa[i])][parseInt(aa[i+1])].image("#");
 }
-window.set_water = function(wat) {
-
+}
+window.set_water = function(mou) {
+aa = mou.split(' ');
+counnt = parseInt(aa[0]);
+for(var i = 1;i<(counnt*2)+1;i+=2) {
+img[parseInt(aa[i])][parseInt(aa[i+1])].type="mountain";
+img[parseInt(aa[i])][parseInt(aa[i+1])].image("#");
+}
 }
 window.read_s = function(co) {
 
@@ -248,6 +258,10 @@ var goes = function(a,b,fg,d) {
 	}
 	if(img[parseInt(c[0])][parseInt(c[1])].owner==d) {
 		console.log("Invalid value");
+		return null;
+	}
+	if(img[parseInt(c[0])][parseInt(c[1])].type=="water"|"mountain") {
+		console.log("Mountain or water");
 		return null;
 	}
 	 if(img[parseInt(c[0])][parseInt(c[1])].owner==0) {
