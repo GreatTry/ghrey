@@ -1,58 +1,76 @@
-<div class="panel">
-<div class="type" style="left: 7%"><p align="center">-</p></div>
-<div class="type" style="left: 80%;color: #de5252;background: #ff6d6d;"><p align="center">-</p></div>
-</div>
 <div class="window">
-<p align="center">Settings</p>
-<p align="center">
-<input type="number" id="width" min='5' placeholder="width"/>
+<p align="center" class="q">
+<button class="but">Choose File</button>
+<input type="file" id="fileinput" />
 </p>
-<p align="center">
-<input type="number" id="height" min='5' placeholder="height"/>
-</p>
-<p align="center">
-<input type="number" id="length" placeholder="length"/>
-</p>
-<p align="center">
-<textarea id="cities" placeholder="cities"></textarea>
-</p>
-<p align="center">
-<select >
-<option disabled selected>Mode</option>
-<option value='1'>1</option>
-<option value='2'>2</option>
-<option value='3'>3</option>
-</select>
-</p>
-<p align="center">
-<textarea id="mountain" placeholder="mountains"></textarea>
-</p>
-<p align="center">
-<textarea id="water" placeholder="water"></textarea>
-</p>
-<p align="center">
-<select>
-<option disabled selected>Choose Oponent</option>
-<option>Player 2</option>
-<option>Computer 1</option>
-<option>Computer 2</option>
-<option>Computer 3</option>
-</select>
-</p>
-<p align="center"><button class="but" onClick="commit(this)">ok</button></p>
 </div>
-<div class="lio"><button class="but ou" style="width: 5%" onClick="save(this)">See</button><button class="but ou" style="width: 5%;background: lightblue">Download</button></div>
 <script type="text/javascript">
 var fi = 0;
 var conts = [];
+  function readSingleFile(evt) {
+  	/*
+  	Весь неработающий в результате експеримента код
+  	удален. По-этому большой части кода нет.
+  	Ну это так заранее просто.
+  	window.draw_all(КОЛОНКИ, РЯДИ); - рисует сетку
+  	window.draw_city({x: 1,y: 1, img: "#.png",id: 0});- функцыя захватывает зону
+  	id - это номер игрока с помошью него счиатем потои
+  	window.count(); - считает захватаные територии(ну тоесть должна в итоге)
+  	Кстати сдесь ходы не считываются из файла ещё
+  	*/
+    var f = evt.target.files[0]; 
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+      	document.getElementsByClassName("window")[0].parentNode.removeChild(document.getElementsByClassName("window")[0]);
+      	var water = [],mountains = [];
+	       contents = e.target.result; 
+	       conts = contents.split('\n');//conts - массив со строками из файла
+	      par=conts[fi].split(' ');//делим первую строку на части
+	      Se.width = par[0];
+	      Se.height = par[1];
+	      window.draw_all(parseInt(par[1]),parseInt(par[0]));//рисуем сетки по параматрам из файла
+	      var ent = Crafty.e('2D, DOM').attr({x: 500,y: 600});
+              Crafty.viewport.follow(ent, 0, 0);
+              turns = parseInt(par[2]);
+              mode = parseInt(par[3]);
+              fi++;
+              cit = conts[fi].split(' ');
+              city[1].x = parseInt(cit[0]);
+              city[1].y = parseInt(cit[1]);
+              city[2].x = parseInt(cit[2]);
+              city[2].y = parseInt(cit[3]);
+              window.draw_city(city[1]);
+              window.draw_city(city[2]);
+              window.set_city(city[1].x,city[1].y,1);
+              window.set_city(city[2].x,city[2].y,2);
+              if(mode>1) {
+              	fi++;
+              	window.set_mountain(conts[fi]);
+              	fi++;
+              	window.set_water(conts[fi]);
+              	fi++;
+              if(mode==3) {
+              	window.read_s(turns*2,fi);
+              }
+              else {
+              	window.read_u(turns*2,fi);
+              }
+          }
+          else {
+          	fi++;
+          	window.read_u(turns*2,fi);
+          }
+      }
+      r.readAsText(f);
+    } else { 
+      alert("Failed to load file");
+    }
+  }
+  document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
 </script>
 <script src="crafty.js"></script>
-
 <script>
-var mode;
-var max = 0;
-var turn = 0;
-var cities;
 var city = [];
 Se = {
 h: 83,
@@ -81,20 +99,16 @@ var img = [];
 var n;
 var border = 1;
 window.count = function() {
-	city[1].count=0;
-	city[2].count=0;
-	for(var j=1;j<Se.width;j++) {
-		for(var i=1;i<Se.height;i++) {
-		if(img[j][i].owner==city[1].id) {
+	for(var j=1;j<Se.width+1;j++) {
+		for(var i=1;i<Se.height+1;i++) {
+		if(img[j][i].id==city[1].id) {
 			city[1].count++;
 		   }
-		   if(img[j][i].owner==city[2].id) {
+		   if(img[j][i].id==city[2].id) {
 			city[2].count++;
 		   }
 	    }
 	}
-	document.getElementsByClassName("type")[0].children[0].innerHTML = city[1].count;
-	document.getElementsByClassName("type")[1].children[0].innerHTML = city[2].count;
 }
 window.draw_city = function(city) {
 	if(img[city.x][city.y]) {
@@ -174,7 +188,6 @@ window.draw_all = function(he,wi) {
 	for(var j = 1;j<wi+1;j++) {
 		img[j] = [];
 		tower[j] = [];
-
 if(j%2!=0) {
 n = 2;
 }
@@ -182,32 +195,11 @@ else {
 	n = 1;
 }
 	for(var i =1;i<he+1;i++)	{
-			 img[j][i] = Crafty.e("2D, DOM, Image, Mouse")
-               .attr({ w: Se.w, h: Se.h, x: Se.w*j/1.5 , y: Se.h*i+Se.h/n,odd: n,type: "usual",owner: 0,bn: j,bm: i})
-                .image("plate.png")
-                .bind('Click',function(e) {
-                	if(turn%2==0) {
-                	if(goes(1,1,this.bn+" "+this.bm,2)!=null){
-                		conts[turn] = this.bn+" "+this.bm;
-                		turn++;
-                		window.count();
-                	}
-                }
-                else {
-                	if(goes(2,1,this.bn+" "+this.bm,1)!=null) {
-                		conts[turn] = this.bn+" "+this.bm;
-                		turn++;
-                		window.count();
-                	}
-                }
-                
-                });
+			 img[j][i] = Crafty.e("2D, DOM, Image")
+               .attr({ w: Se.w, h: Se.h, x: Se.w*j/1.5 , y: Se.h*i+Se.h/n,odd: n,type: "usual",owner: 0})
+                .image("plate.png");
 		} 
 	}
-		window.draw_city(city[1]);
-              window.draw_city(city[2]);
-              window.set_city(city[1].x,city[1].y,1);
-              window.set_city(city[2].x,city[2].y,2);
 }
 window.set_tower = function(x,y) {
 	var flei;
@@ -264,9 +256,9 @@ var goes = function(a,b,fg,d) {
 	return null;
 		}
 		else {
-	c = fg.split(' ');
-	console.log(fg);
-	if(parseInt(c[0])==city[1].x & parseInt(c[1])==city[1].y) {
+	c = conts[fg].split(' ');
+	console.log(conts[fg]);
+	if(parseInt(c[0])==city[1].x & parseInt(c[1])==city[1].y || parseInt(c[0])==city[2].x & parseInt(c[2])==city[2].y) {
 		console.log("Sorry there is a city");
 		return null;
 	}
@@ -293,7 +285,7 @@ return null;
 	window.stay_tower(parseInt(c[0]),parseInt(c[1]),a);
 	return true;
         }
-    }
+}
 window.onload = function() {
 	Crafty.init();
 	window.cmd.init();
@@ -368,54 +360,6 @@ else {
 	return false;
 }
 }
-function commit(obec) {
-		max = parseInt(obec.parentNode.parentNode.children[3].children[0].value);
-	cities = obec.parentNode.parentNode.children[4].children[0].value;
-	mode =  parseInt(obec.parentNode.parentNode.children[5].children[0].value);
-	mount = obec.parentNode.parentNode.children[6].children[0].value;
-	water = obec.parentNode.parentNode.children[7].children[0].value;
-	oponent = obec.parentNode.parentNode.children[4].children[0].value;
-	ci = cities.split(' ');
-	city[1].x = parseInt(ci[0]);city[1].y = parseInt(ci[1]);
-	city[2].x = parseInt(ci[2]);city[2].y = parseInt(ci[3]);
-	document.getElementById("cr-stage").setAttribute("class","bd");
-	window.draw_all(parseInt(obec.parentNode.parentNode.children[2].children[0].value),parseInt(obec.parentNode.parentNode.children[1].children[0].value));
-	if(mode>1) {
-	window.set_water(water);
-	window.set_mountain(mount);
-}
-	var ent = Crafty.e('2D, DOM').attr({x: 250, y: 250, w: 100, h: 100});
-	Crafty.viewport.follow(ent,3000);
-	obec.parentNode.parentNode.parentNode.removeChild(obec.parentNode.parentNode);
-	Se.width = parseInt(obec.parentNode.parentNode.children[2].children[0].value);
-	Se.height = parseInt(obec.parentNode.parentNode.children[1].children[0].value);
-
-}
-function save(th) {
-	var line = [];
-	n = 0;
- line[n] = Se.width+" "+Se.height+" "+max+" "+mode;
-n++;
- line[n] = cities;
-if(mode>1) {
-	n++;
-	line[n] = mount;
-	n++;
-	line[n] = water;
-}
-n++;
-var gip = "";
-for(var i=0;i<conts.length;i++){
-gip+=conts[i]+"\r\n";
-}
-var sip="";
-for(var j=0;j<line.length;j++){
-sip+=line[j]+"\r\n";
-}
-alert(conts[0]);
-//var file = new Blob([escape(sip+gip)], {type: "text/plain"});
-th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+escape(sip+gip)+"'download='output.txt'>Download</a>";
-}
 </script>
 <style>
 * {
@@ -425,13 +369,20 @@ th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+esca
 	position: fixed;
 	transition: 1s;
 	width: 500px;
-	height: 600px;
+	height: 100px;
 	background: white;
 	left: 36%;
 	-webkit-animation: anim 1s;
 	z-index: 100;
 	box-shadow: 1px 1px 10px lightgrey;
 	top: 0px;
+}
+#fileinput {
+	opacity: 0;
+	width: 100%;
+	height: 100px;
+	position: absolute;
+	left:0;
 }
 .but {
 	width: 70%;
@@ -442,9 +393,6 @@ th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+esca
 	border: none;
 	font-size: 15px;
 	transition: 0.5s;
-	margin-left: 10px;
-	margin-bottom: 5px;
-	margin-top: 5px;
 }
 .q:hover .but {
 	background: #ffcc6d;
@@ -454,19 +402,6 @@ th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+esca
 	background: #ffcc6d;
 	width: 90%;
 }
-input {
-	width: 70%;
-	height: 40px;
-	text-align: center;
-}
-select {
-	width: 70%;
-	height: 40px;
-	text-align: center;
-}
-.bd {
--webkit-animation: anims 0.5s;
-}
 @-webkit-keyframes anim {
 	0% {
 		top: -200px;
@@ -474,51 +409,5 @@ select {
 	100% {
 		top: 0;
 	}
-}
-@-webkit-keyframes anims {
-	0% {
-		margin-top: -1000px;
-	}
-	100% {
-		margin-top: 0;
-	}
-}
-.panel {
-	width: 100%;
-    height: 150px;
-    background: rgba(241, 241, 241, 0.44);
-    opacity: 1;
-    position: fixed;
-    font-size: 40px;
-    top: 0;
-    display: inline-block;
-    z-index: 100;
-}
-.type {
-    position: absolute;
-    color: #84bbb1;
-    width: 200px;
-    height: 150px;
-    font-size: 60px;
-    background: #b8e0db;
-    opacity: 1;
-    display: inline-block;
-    font-family: Arial;
-}
-textarea {
-	width: 70%;
-}
-.lio {
-	position:fixed;
-	bottom: 0;
-	width: 100%;
-	z-index: 10;
-	background: rgba(232, 232, 232, 0.44);
-}
-.ou {
-	width: 50px;
-}
-body {
-	margin: 0;
 }
 </style>
