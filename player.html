@@ -33,7 +33,7 @@
 <p align="center">
 <select>
 <option disabled selected>Choose Oponent</option>
-<option value="player">Player 2</option>
+<option value="player">player</option>
 <option value="1">Computer 1</option>
 <option value="2">Computer 2</option>
 <option value="3">Computer 3</option>
@@ -84,8 +84,8 @@ var border = 1;
 window.count = function() {
 	city[1].count=0;
 	city[2].count=0;
-	for(var j=1;j<Se.width;j++) {
-		for(var i=1;i<Se.height;i++) {
+	for(var j=1;j<Se.width+1;j++) {
+		for(var i=1;i<Se.height+1;i++) {
 		if(img[j][i].owner==city[1].id) {
 			city[1].count++;
 		   }
@@ -174,8 +174,12 @@ img[city.x+1][city.y+1].owner = city.id;
 function engine() {
 	for(var j=1;j<Se.width+1;j++) {
 		for(var i = 0;i<Se.height+1;i++) {
+			if(img[j]) {
+				if(img[j][i]) {
 			if(goes(2,1,j+" "+i,1)!=null){
 				return img[j][i];
+			}
+			}
 			}
 		}
 	}
@@ -201,11 +205,12 @@ else {
                 	if(goes(1,1,this.bn+" "+this.bm,2)!=null){
                 		conts[turn] = this.bn+" "+this.bm;
                 		turn++;
-                		window.count();
-
 
                 		if(op!="player") {
                 			f = engine();
+                			conts[turn] = f.bn+" "+f.bm;
+                			turn++;
+                			window.count();
                 		}
                 	}
 
@@ -391,7 +396,7 @@ function commit(obec) {
 	mode =  parseInt(obec.parentNode.parentNode.children[5].children[0].value);
 	mount = obec.parentNode.parentNode.children[6].children[0].value;
 	water = obec.parentNode.parentNode.children[7].children[0].value;
-	op = parseInt(obec.parentNode.parentNode.children[8].children[0].value);
+	op = obec.parentNode.parentNode.children[8].children[0].value;
 	ci = cities.split(' ');
 	city[1].x = parseInt(ci[0]);city[1].y = parseInt(ci[1]);
 	city[2].x = parseInt(ci[2]);city[2].y = parseInt(ci[3]);
