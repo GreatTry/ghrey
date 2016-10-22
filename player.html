@@ -143,7 +143,7 @@ body {
 </p>
 <p align="center">
 <select >
-<option disabled selected>Ðåæèì ãðè</option>
+<option disabled selected>Режим гри</option>
 <option value='1'>I'm too young to die</option>
 <option value='2'>Hey, not too rough!</option>
 <option value='3'>Hurt me plenty</option>
@@ -157,16 +157,16 @@ body {
 </p>
 <p align="center">
 <select>
-<option disabled selected>Îïîíåíò</option>
-<option value="player">Ãðàâåöü 2</option>
-<option value="1">Êîìïüþòåð 1</option>
-<option value="2">Êîìïüþòåð 2</option>
+<option disabled selected>Опонент</option>
+<option value="player">Гравець 2</option>
+<option value="1">Компьютер 1</option>
+<option value="2">Компьютер 2</option>
 </select>
 </p>
-<p align="center"><button class="but" onClick="commit(this)">Íîâà ãðà</button></p>
+<p align="center"><button class="but" onClick="commit(this)">Нова гра</button></p>
 </div>
 <div class="round" onClick="movecamera(event,this)"><div class="rounded"></div></div>
-<div class="lio"><button class="but ou" style="width: 10%" onClick="save(this)">Îòðèìàòè ôàéë</button><button class="but ou" style="width: 10%;background: lightblue;opacity: 0">Çàâàíòàæèòè ôàéë</button></div>
+<div class="lio"><button class="but ou" style="width: 10%" onClick="save(this)">Отримати файл</button><button class="but ou" style="width: 10%;background: lightblue;opacity: 0">Завантажити файл</button></div>
 <script type="text/javascript">
 var off = 0;
 var fi = 0;
@@ -1019,8 +1019,7 @@ sip+=line[j]+"\r\n";
 }
 alert(sip+gip);
 //var file = new Blob([escape(sip+gip)], {type: "text/plain"});
-th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+escape(sip+gip)+"'download='output.txt'>Çàâàíòàæèòè ôàéë</a>";
+th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+escape(sip+gip)+"'download='output.txt'>Завантажити файл</a>";
 th.parentNode.children[1].style.opacity = 1;
 }
 </script>
-
