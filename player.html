@@ -1,5 +1,4 @@
 <head>
-<meta charset="utf-8">
 <meta charset="windows-1251">
 <style>
 .round {
@@ -122,40 +121,28 @@ textarea {
 body {
 	margin: 0;
 }
-#escape{
-	display: inline-block;
-	font-size: 10px;
-}
-#escape img{
-	width: 50px;
-	height: 50px;
-}
 </style>
 </head>
 <div class="panel">
-<div id="escape">
-	<a href="menu.html">
-		
-		<img src="arrowl.png" alt="">
-	</a>
-</div>
-
 <div class="type" style="left: 7%"><p align="center">-</p></div>
 <div class="type" style="left: 80%;color: #de5252;background: #ff6d6d;"><p align="center">-</p></div>
 </div>
 <div class="window">
-<p align="center">Параметри</p>
+<p align="center">Settings</p>
 <p align="center">
-<input type="number" id="width" min='5' placeholder="КІЛЬКІСТЬ СТОВПЦІВ"/>
+<input type="number" id="width" min="5" max="50" placeholder="width" value="5" onChange="_auto(this)"/>
 </p>
 <p align="center">
-<input type="number" id="height" min='5' placeholder="КІЛЬКІСТЬ ДІЛЯНОК У СТОВПЦІ"/>
+<input type="number" id="height" min="5" max="50" placeholder="width" value="5" onChange="_auto(this)"/>
 </p>
 <p align="center">
-<input type="number" id="length" placeholder="КІЛЬКІСТЬ ХОДІВ"/>
+<input type="number" id="length" placeholder="length" value="0"/>
 </p>
 <p align="center">
-<textarea id="cities" placeholder="КООРДИНАТИ МІСТ"></textarea>
+<textarea id="cities" placeholder="city 1"></textarea>
+</p>
+<p align="center">
+<textarea id="cities2" placeholder="city 2"></textarea>
 </p>
 <p align="center">
 <select >
@@ -166,10 +153,10 @@ body {
 </select>
 </p>
 <p align="center">
-<textarea id="mountain" placeholder="КІЛЬКІСТЬ ТА КООРДИНАТИ ДІЛЯНОК З ГОРАМИ"></textarea>
+<textarea id="mountain" placeholder="mountains"></textarea>
 </p>
 <p align="center">
-<textarea id="water" placeholder="КІЛЬКІСТЬ ТА КООРДИНАТИ ДІЛЯНОК З ВОДОЮ"></textarea>
+<textarea id="water" placeholder="water"></textarea>
 </p>
 <p align="center">
 <select>
@@ -269,6 +256,18 @@ window.count = function() {
 	}
 	document.getElementsByClassName("type")[0].children[0].innerHTML = city[1].count;
 	document.getElementsByClassName("type")[1].children[0].innerHTML = city[2].count;
+	if(turn==max*2) {
+                			window.onEnd();
+                            clickk = function() {return false;}
+                            if(mode==3) {
+                            for(var i in city[1].general){
+                            	city[1].general[i].disabled = true;
+                            }
+                            for(var i in city[2].general){
+                            	city[2].general[i].disabled= true;
+                            }
+                        }
+                		}
 }
 window.draw_city = function(city) {
 	if(img[city.x][city.y]) {
@@ -372,6 +371,7 @@ function clickk(thiss) {
                 			turn++;
 
                 			window.count();
+              
                 		}
                 	}
 
@@ -381,6 +381,7 @@ function clickk(thiss) {
                 		conts[turn] = thiss.bn+" "+thiss.bm;
                 		turn++;
                 		window.count();
+                		
                 	}
                 }
                 }
@@ -437,29 +438,7 @@ else {
                             	console.log("gen");
                             	if(!this.disabled) {
                             	if(turn%2==0) {
-                            	if(goes(this.owner,1,this.bn+" "+this.bm,2)==null){
-                            		return false;
-                            	}
-                            	this.alpha = 0;
-                            	this.disabled = true;
-                            	this.x=-2000;
-                            	//city[n].unset++;
-                            	micro=2;
-                             	if(micro==2){macro++;micro=0;current=null;did=true;off++;
-	           		if(macro==def[1]-city[1].unset){
-	           			micro=0;
-	           			def[1]++;
-	           			def[1]-=off;
-	           			off=0;
-	           			//def[1]--;
-	           			city[1].gennum++;
-	           			macro=0;
-	           			create(1);
-	           			turn++;
-	           			did=true;
-	           			current=null;
-	           		}
-	           	}
+                            	general_dbl(1,this);
                             	}
                             }
                             })
@@ -482,28 +461,7 @@ else {
                              .bind("DoubleClick", function(e) {if(!this.disabled) {
                              	if(!this.disabled) {
                             			if(turn%2!=0) {
-                            	if(goes(this.owner,1,this.bn+" "+this.bm,2)==null){
-                            		return false;
-                            	}
-                            	this.alpha = 0;
-                            	this.disabled = true;
-                            	this.x=-2000;
-                            	//city[2].unset++;
-                            	micro=2;
-                             	if(micro==2){macro++;micro=0;current=null;did=true;off++;
-	           		if(macro==def[2]-city[2].unset){
-	           			micro=0;
-	           			def[2]++;
-	           			def[2]-=off;
-	           			off=0;
-	           			city[2].gennum++;
-	           			macro=0;
-	           			create(2);
-	           			turn++;
-	           			did=true;
-	           			current=null;
-	           		}
-	           	}
+                            	general_dbl(2,this);
                             	}
                             }
                         }
@@ -543,54 +501,12 @@ var create = function(n) {
                             	if(!this.disabled) {
                             	if(n===1) {
                             		if(turn%2==0) {
-                            	if(goes(this.owner,1,this.bn+" "+this.bm,2)==null){
-                            		return false;
-                            	}
-                            	this.alpha = 0;
-                            	this.disabled = true;
-                            	this.x=-2000;
-                            	//city[n].unset++;
-                            	micro=2;
-                             	if(micro==2){macro++;micro=0;current=null;did=true;off++;
-	           		if(macro==def[1]-city[1].unset){
-	           			micro=0;
-	           			def[1]++;
-	           			def[1]-=off;
-	           			off=0;
-	           			city[1].gennum++;
-	           			macro=0;
-	           			create(1);
-	           			turn++;
-	           			did=true;
-	           			current=null;
-	           		}
-	           	}
+                            	general_dbl(1,this);
                             	}
                             }
                             	if(n===2) {
                             		if(turn%2!=0) {
-                            	if(goes(this.owner,2,this.bn+" "+this.bm,1)==null){
-                            		return false;
-                            	}
-                            	this.alpha = 0;
-                            	this.disabled = true;
-                            	this.x=-2000;
-                            	//city[n].unset++;
-                            	micro=2;
-                           	if(micro==2){macro++;micro=0;current=null;did=true;off++;
-	           		if(macro==def[2]-city[2].unset){
-	           			micro=0;
-	           			def[2]++;
-	           			def[2]-=off;
-	           			off=0;
-	           			city[2].gennum++;
-	           			macro=0;
-	           			create(2);
-	           			turn++;
-	           			did=true;
-	           			current=null;
-	           		}
-	           	}
+                            general_dbl(2,this);
                             	}
                             }
                         }
@@ -665,6 +581,7 @@ var proc_3 = function(its) {
 	           			macro=0;
 	           			create(1);
 	           			turn++;
+	           			window.onChangeTurn();
 	           			did=true;
 	           			current=null;
 	           		}
@@ -695,6 +612,7 @@ var proc_3 = function(its) {
 	           			city[2].gennum++;
 	           			create(2);
 	           			turn++;
+	           			window.onChangeTurn();
 	           			did=true;
 	           			current=null;
 	           		}
@@ -806,10 +724,6 @@ return null;
     }
 
 var goes = function(a,b,fg,d) {
-	if(b==0) {
-	return null;
-		}
-		else {
 	c = fg.split(' ');
 	console.log(fg);
 	if(parseInt(c[0])==city[1].x & parseInt(c[1])==city[1].y) {
@@ -829,10 +743,12 @@ var goes = function(a,b,fg,d) {
 		return null;
 	}
 	 //if(img[parseInt(c[0])][parseInt(c[1])].owner==0) {
+	 	if(d!=-1) {
 		if(check_pos(parseInt(c[0]),parseInt(c[1]),a)!=true){
 			console.log("Validate move");
 return null;
 //}
+}
 	}
 
 	if(img[parseInt(c[0])]){
@@ -844,11 +760,12 @@ return null;
 	window.stay_tower(parseInt(c[0]),parseInt(c[1]),a);
 	return true;
         }
-    }
+    
 
 window.onload = function() {
 	Crafty.init();
 	window.cmd.init();
+	window.Restrict();
 };
 function check_poss(x,y) {
 	if(img[x][y]) {
@@ -992,14 +909,16 @@ else {
 }
 function commit(obec) {
 		max = parseInt(obec.parentNode.parentNode.children[3].children[0].value);
-	cities = obec.parentNode.parentNode.children[4].children[0].value;
-	mode =  parseInt(obec.parentNode.parentNode.children[5].children[0].value);
-	mount = obec.parentNode.parentNode.children[6].children[0].value;
-	water = obec.parentNode.parentNode.children[7].children[0].value;
-	op = obec.parentNode.parentNode.children[8].children[0].value;
-	ci = cities.split(' ');
+	city1 = obec.parentNode.parentNode.children[4].children[0].value;
+	city2 = obec.parentNode.parentNode.children[5].children[0].value;
+	mode =  parseInt(obec.parentNode.parentNode.children[6].children[0].value);
+	mount = obec.parentNode.parentNode.children[7].children[0].value;
+	water = obec.parentNode.parentNode.children[8].children[0].value;
+	op = obec.parentNode.parentNode.children[9].children[0].value;
+	ci = city1.split(' ');
 	city[1].x = parseInt(ci[0]);city[1].y = parseInt(ci[1]);
-	city[2].x = parseInt(ci[2]);city[2].y = parseInt(ci[3]);
+	ci = city2.split(' ');
+	city[2].x = parseInt(ci[0]);city[2].y = parseInt(ci[1]);
 	document.getElementById("cr-stage").setAttribute("class","bd");
 	window.draw_all(parseInt(obec.parentNode.parentNode.children[2].children[0].value),parseInt(obec.parentNode.parentNode.children[1].children[0].value));
 	if(mode>1) {
@@ -1017,7 +936,7 @@ function save(th) {
 	n = 0;
  line[n] = Se.width+" "+Se.height+" "+max+" "+mode;
 n++;
- line[n] = cities;
+ line[n] = city1 + " " + city2;
 if(mode>1) {
 	n++;
 	line[n] = mount;
@@ -1038,4 +957,45 @@ alert(sip+gip);
 th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+escape(sip+gip)+"'download='output.txt'>Завантажити файл</a>";
 th.parentNode.children[1].style.opacity = 1;
 }
+function _auto(elem) {
+if(parseInt(elem.value)>50) {
+elem.value=5;
+}
+}
+function general_dbl(num,thiss) {
+if(goes(thiss.owner,num,thiss.bn+" "+thiss.bm,-1)==null){
+                            		return false;
+                            	}
+                            	thiss.alpha = 0;
+                            	thiss.disabled = true;
+                            	thiss.x=-2000;
+                            	//city[n].unset++;
+                            	micro=2;
+                           	if(micro==2){macro++;micro=0;current=null;did=true;off++;
+	           		if(macro==def[num]-city[num].unset){
+	           			micro=0;
+	           			def[num]++;
+	           			def[num]-=off;
+	           			off=0;
+	           			city[num].gennum++;
+	           			macro=0;
+	           			create(num);
+	           			turn++;
+	           			window.onChangeTurn();
+	           			did=true;
+	           			current=null;
+	           		}
+	           	}
+}
+window.onEnd = function() {
+var winner = (city[1].count>city[2].count ? 1 : 2);
+alert("Перемога за гравцем №"+winner+".З рахунком "+city[1].count+":"+city[2].count);
+};
+window.onChangeTurn = function() {
+	window.count();
+};
+window.Restrict = function() {
+	
+};
+
 </script>
