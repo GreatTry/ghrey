@@ -121,6 +121,12 @@ textarea {
 body {
 	margin: 0;
 }
+#mountain{
+display: none;
+}
+#water{
+display: none;
+}
 </style>
 </head>
 <div class="panel">
@@ -145,7 +151,7 @@ body {
 <textarea id="cities2" placeholder="city 2"></textarea>
 </p>
 <p align="center">
-<select >
+<select  id="sel">
 <option disabled selected>Режим гри</option>
 <option value='1'>I'm too young to die</option>
 <option value='2'>Hey, not too rough!</option>
@@ -171,6 +177,22 @@ body {
 <div class="round" onClick="movecamera(event,this)"><div class="rounded"></div></div>
 <div class="lio"><button class="but ou" style="width: 10%" onClick="save(this)">Отримати файл</button><button class="but ou" style="width: 10%;background: lightblue;opacity: 0">Завантажити файл</button></div>
 <script type="text/javascript">
+var sel = document.getElementById("sel");
+
+
+var mou = document.getElementById("mountain");
+var wat = document.getElementById("water");
+sel.onchange = function (){
+	if(this.value == 2 || this.value == 3){
+		console.log(this.value);
+		mou.style.display = "block";
+		wat.style.display = "block";
+	}
+	else{
+				mou.style.display = "none";
+				wat.style.display = "none";
+	}
+}
 var off = 0;
 var fi = 0;
 var conts = [];
