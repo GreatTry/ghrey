@@ -1,3 +1,128 @@
+<head>
+<meta charset="windows-1251">
+<style>
+.round {
+	position: fixed;
+	width: 100px;
+	height: 100px;
+	background: grey;
+	opacity: 0.5;
+	z-index: 101;
+	bottom: 10%;
+	right: 5%;
+}
+.rounded {
+	width: 8px;
+	height: 8px;
+	background: red;
+	border-radius: 10px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+}
+* {
+	-webkit-box-selection: none;
+}
+.window {
+	position: fixed;
+	transition: 1s;
+	width: 500px;
+	height: 600px;
+	background: white;
+	left: 36%;
+	-webkit-animation: anim 1s;
+	z-index: 100;
+	box-shadow: 1px 1px 10px lightgrey;
+	top: 0px;
+}
+.but {
+	width: 70%;
+	height: 40px;
+	background: orange;
+	border-radius: 8px;
+	color: #796e58;
+	border: none;
+	font-size: 15px;
+	transition: 0.5s;
+	margin-left: 10px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	text-align: center;
+}
+.q:hover .but {
+	background: #ffcc6d;
+	width: 90%;
+}
+.but:hover {
+	background: #ffcc6d;
+	width: 90%;
+}
+input {
+	width: 70%;
+	height: 40px;
+	text-align: center;
+}
+select {
+	width: 70%;
+	height: 40px;
+	text-align: center;
+}
+.bd {
+-webkit-animation: anims 0.5s;
+}
+@-webkit-keyframes anim {
+	0% {
+		top: -200px;
+	}
+	100% {
+		top: 0;
+	}
+}
+@-webkit-keyframes anims {
+	0% {
+		margin-top: -1000px;
+	}
+	100% {
+		margin-top: 0;
+	}
+}
+.panel {
+	width: 100%;
+    height: 150px;
+    background: rgba(241, 241, 241, 0.44);
+    opacity: 1;
+    position: fixed;
+    font-size: 40px;
+    top: 0;
+    display: inline-block;
+    z-index: 100;
+}
+.type {
+    position: absolute;
+    color: #84bbb1;
+    width: 200px;
+    height: 150px;
+    font-size: 60px;
+    background: #b8e0db;
+    opacity: 1;
+    display: inline-block;
+    font-family: Arial;
+}
+textarea {
+	width: 70%;
+}
+.lio {
+	position:fixed;
+	bottom: 0;
+	width: 100%;
+	z-index: 100;
+	background: rgba(232, 232, 232, 0.44);
+}
+body {
+	margin: 0;
+}
+</style>
+</head>
 <div class="panel">
 <div class="type" style="left: 7%"><p align="center">-</p></div>
 <div class="type" style="left: 80%;color: #de5252;background: #ff6d6d;"><p align="center">-</p></div>
@@ -18,10 +143,10 @@
 </p>
 <p align="center">
 <select >
-<option disabled selected>Mode</option>
-<option value='1'>1</option>
-<option value='2'>2</option>
-<option value='3'>3</option>
+<option disabled selected>Ðåæèì ãðè</option>
+<option value='1'>I'm too young to die</option>
+<option value='2'>Hey, not too rough!</option>
+<option value='3'>Hurt me plenty</option>
 </select>
 </p>
 <p align="center">
@@ -32,23 +157,46 @@
 </p>
 <p align="center">
 <select>
-<option disabled selected>Choose Oponent</option>
-<option value="player">player</option>
-<option value="1">Computer 1</option>
-<option value="2">Computer 2</option>
-<option value="3">Computer 3</option>
+<option disabled selected>Îïîíåíò</option>
+<option value="player">Ãðàâåöü 2</option>
+<option value="1">Êîìïüþòåð 1</option>
+<option value="2">Êîìïüþòåð 2</option>
 </select>
 </p>
-<p align="center"><button class="but" onClick="commit(this)">ok</button></p>
+<p align="center"><button class="but" onClick="commit(this)">Íîâà ãðà</button></p>
 </div>
-<div class="lio"><button class="but ou" style="width: 5%" onClick="save(this)">See</button><button class="but ou" style="width: 5%;background: lightblue">Download</button></div>
+<div class="round" onClick="movecamera(event,this)"><div class="rounded"></div></div>
+<div class="lio"><button class="but ou" style="width: 10%" onClick="save(this)">Îòðèìàòè ôàéë</button><button class="but ou" style="width: 10%;background: lightblue;opacity: 0">Çàâàíòàæèòè ôàéë</button></div>
 <script type="text/javascript">
+var off = 0;
 var fi = 0;
 var conts = [];
+var cur;var current;
+var micro = 0;
+var macro = 0;
+var def = [];
+def[1]=1;
+def[2]=1;
+var did = true;
 </script>
 <script src="crafty.js"></script>
 
 <script>
+var movecamera = function(e,th) {
+th.children[0].style.left=e.offsetX+"px";
+th.children[0].style.top=e.offsetY+"px";
+}
+window.onmousewheel = function(e) {
+	if(e.direction==1) {
+		zoom+=0.1;
+		Crafty.viewport.scale(zoom);
+	}
+	else if(e.direction==-1) {
+		zoom-=0.1;
+		Crafty.viewport.scale(zoom);
+	}
+};
+var zoom = 1;
 var op;
 var mode;
 var max = 0;
@@ -63,20 +211,29 @@ height: 5
 }
 img1 = "water_plate.png";
 city[1] = {};
+city[1].gennum=0;
 city[1].x = 1;
 city[1].y = 3;
 city[1].count = 0;
+city[1].micro = 0;
 city[1].img = "water_plate.png";
 city[1].self = "city.png";
+city[1].general = [];
+city[1].unset = 0;
 city[1].id = 1;
 city[2] = {};
+city[2].general=[];
+city[2].gennum=0;
+city[2].micro = 0;
 city[2].x = 3;
 city[2].y = 1;
 city[2].count = 0;
+city[2].unset = 0;
 city[2].img = "plate_red.png";
 city[2].self = "city.png";
 city[2].id = 2;
 var tower = [];
+var t_count = 0;
 var t_num = 0;
 var img = [];
 var n;
@@ -84,8 +241,8 @@ var border = 1;
 window.count = function() {
 	city[1].count=0;
 	city[2].count=0;
-	for(var j=1;j<Se.width+1;j++) {
-		for(var i=1;i<Se.height+1;i++) {
+	for(var j=1;j<Se.height+1;j++) {
+		for(var i=1;i<Se.width+1;i++) {
 		if(img[j][i].owner==city[1].id) {
 			city[1].count++;
 		   }
@@ -184,10 +341,42 @@ function engine() {
 		}
 	}
 }
+function clickk(thiss) {
+		if(mode<3) {
+                	if(turn<max*2) {
+                	if(turn%2==0) {
+                	if(goes(1,1,thiss.bn+" "+thiss.bm,2)!=null){
+                		conts[turn] = thiss.bn+" "+thiss.bm;
+                		turn++;
+                		window.count();
+                		if(op!="player") {
+                			f = engine();
+                			conts[turn] = f.bn+" "+f.bm;
+                			f = null;
+                			turn++;
+
+                			window.count();
+                		}
+                	}
+
+                }
+                else {
+                	if(goes(2,1,thiss.bn+" "+thiss.bm,1)!=null) {
+                		conts[turn] = thiss.bn+" "+thiss.bm;
+                		turn++;
+                		window.count();
+                	}
+                }
+                }
+           }
+             else {
+             	cur = thiss;
+             	proc_3(thiss);
+            }
+}
 window.draw_all = function(he,wi) {
 	for(var j = 1;j<wi+1;j++) {
 		img[j] = [];
-		tower[j] = [];
 
 if(j%2!=0) {
 n = 2;
@@ -200,45 +389,213 @@ else {
                .attr({ w: Se.w, h: Se.h, x: Se.w*j/1.5 , y: Se.h*i+Se.h/n,odd: n,type: "usual",owner: 0,bn: j,bm: i})
                 .image("plate.png")
                 .bind('Click',function(e) {
-                	if(turn<max*2) {
-                	if(turn%2==0) {
-                	if(goes(1,1,this.bn+" "+this.bm,2)!=null){
-                		conts[turn] = this.bn+" "+this.bm;
-                		turn++;
-
-                		if(op!="player") {
-                			f = engine();
-                			conts[turn] = f.bn+" "+f.bm;
-                			turn++;
-                			window.count();
-                		}
-                	}
-
-                }
-                else {
-                	if(goes(2,1,this.bn+" "+this.bm,1)!=null) {
-                		conts[turn] = this.bn+" "+this.bm;
-                		turn++;
-                		window.count();
-                	}
-                }
-                }
+                clickk(this);
                 });
+            
 		} 
+		Crafty.viewport.clampToEntities=false;
+		Crafty.viewport.mouselook(true);
 	}
 		window.draw_city(city[1]);
               window.draw_city(city[2]);
               window.set_city(city[1].x,city[1].y,1);
               window.set_city(city[2].x,city[2].y,2);
+              if(mode==3) {
+			city[1].gennum=1;
+			city[2].gennum=1;
+			city[1].general[city[1].gennum] = Crafty.e("2D, DOM, Image, Mouse") 
+                            .attr({ w: Se.w, h: Se.h, x: img[city[1].x][city[1].y].x, y: img[city[1].x][city[1].y].y,type: "general",number: city[1].gennum,bn: img[city[1].x][city[1].y].bn,bm: img[city[1].x][city[1].y].bm,owner: 1,number: city[1].gennum}) 
+                            .bind("Click", function(e) {
+                            	console.log("gen");
+                            	if(!this.disabled) {
+                            	if(turn%2==0) {
+                            	if(did) {
+                            		did = false;
+                            	current = this;
+                            	img[this.bn][this.bm].generaled=true;
+                            }
+                        }
+                    }
+                            })
+                            .bind("DoubleClick", function(e) {
+                            	console.log("gen");
+                            	if(!this.disabled) {
+                            	if(turn%2==0) {
+                            	if(goes(this.owner,1,this.bn+" "+this.bm,2)==null){
+                            		return false;
+                            	}
+                            	this.alpha = 0;
+                            	this.disabled = true;
+                            	this.x=-2000;
+                            	//city[n].unset++;
+                            	micro=2;
+                             	if(micro==2){macro++;micro=0;current=null;did=true;off++;
+	           		if(macro==def[1]-city[1].unset){
+	           			micro=0;
+	           			def[1]++;
+	           			def[1]-=off;
+	           			off=0;
+	           			//def[1]--;
+	           			city[1].gennum++;
+	           			macro=0;
+	           			create(1);
+	           			turn++;
+	           			did=true;
+	           			current=null;
+	           		}
+	           	}
+                            	}
+                            }
+                            })
+                           .image("gen.png");
+			city[2].general[city[2].gennum] = Crafty.e("2D, DOM, Image, Mouse") 
+                            .attr({ w: Se.w, h: Se.h, x: img[city[2].x][city[2].y].x, y: img[city[2].x][city[2].y].y,type: "general",number: city[2].gennum,owner: 2,bn: img[city[2].x][city[2].y].bn,bm: img[city[2].x][city[2].y].bm,number:city[2].gennum}) 
+                             .bind("Click", function(e) {
+                             	console.log("gen");
+                             	if(!this.disabled) {
+                             	if(turn%2!=0) {
+
+                            	if(did) {
+                            		did = false;
+                            	current = this;
+                            	img[this.bn][this.bm].generaled=true;
+                            }
+                        }
+                    }
+                            })
+                             .bind("DoubleClick", function(e) {if(!this.disabled) {
+                             	if(!this.disabled) {
+                            			if(turn%2!=0) {
+                            	if(goes(this.owner,1,this.bn+" "+this.bm,2)==null){
+                            		return false;
+                            	}
+                            	this.alpha = 0;
+                            	this.disabled = true;
+                            	this.x=-2000;
+                            	//city[2].unset++;
+                            	micro=2;
+                             	if(micro==2){macro++;micro=0;current=null;did=true;off++;
+	           		if(macro==def[2]-city[2].unset){
+	           			micro=0;
+	           			def[2]++;
+	           			def[2]-=off;
+	           			off=0;
+	           			city[2].gennum++;
+	           			macro=0;
+	           			create(2);
+	           			turn++;
+	           			did=true;
+	           			current=null;
+	           		}
+	           	}
+                            	}
+                            }
+                        }
+                            })
+                           .image("gen.png");
+		}
+}
+var create = function(n) {
+	city[n].general[city[n].gennum] = Crafty.e("2D, DOM, Image, Mouse") 
+                            .attr({ w: Se.w, h: Se.h, x: img[city[n].x][city[n].y].x, y: img[city[n].x][city[n].y].y,type: "general",number: city[n].gennum,bn: img[city[n].x][city[n].y].bn,bm: img[city[n].x][city[n].y].bm,owner: n,number: city[n].gennum,z: 3}) 
+                            .bind("Click", function(e) {
+                            	console.log("gen");
+                            	if(!this.disabled) {
+                            	if(n===1) {
+                            	if(turn%2==0) {
+                            	if(did) {
+                            		did = false;
+                            	current = this;
+                            	img[this.bn][this.bm].generaled=true;
+                            }
+                        }
+                    }
+                    
+                    	if(n===2) {
+                            	if(turn%2!=0) {
+                            	if(did) {
+                            		did = false;
+                            	current = this;
+                            	img[this.bn][this.bm].generaled=true;
+                            }
+                        }
+                    }
+                
+            }
+                            })
+                            .bind("DoubleClick", function(e) {
+                            	if(!this.disabled) {
+                            	if(n===1) {
+                            		if(turn%2==0) {
+                            	if(goes(this.owner,1,this.bn+" "+this.bm,2)==null){
+                            		return false;
+                            	}
+                            	this.alpha = 0;
+                            	this.disabled = true;
+                            	this.x=-2000;
+                            	//city[n].unset++;
+                            	micro=2;
+                             	if(micro==2){macro++;micro=0;current=null;did=true;off++;
+	           		if(macro==def[1]-city[1].unset){
+	           			micro=0;
+	           			def[1]++;
+	           			def[1]-=off;
+	           			off=0;
+	           			city[1].gennum++;
+	           			macro=0;
+	           			create(1);
+	           			turn++;
+	           			did=true;
+	           			current=null;
+	           		}
+	           	}
+                            	}
+                            }
+                            	if(n===2) {
+                            		if(turn%2!=0) {
+                            	if(goes(this.owner,2,this.bn+" "+this.bm,1)==null){
+                            		return false;
+                            	}
+                            	this.alpha = 0;
+                            	this.disabled = true;
+                            	this.x=-2000;
+                            	//city[n].unset++;
+                            	micro=2;
+                           	if(micro==2){macro++;micro=0;current=null;did=true;off++;
+	           		if(macro==def[2]-city[2].unset){
+	           			micro=0;
+	           			def[2]++;
+	           			def[2]-=off;
+	           			off=0;
+	           			city[2].gennum++;
+	           			macro=0;
+	           			create(2);
+	           			turn++;
+	           			did=true;
+	           			current=null;
+	           		}
+	           	}
+                            	}
+                            }
+                        }
+                            })
+                           .image("gen.png");
 }
 window.set_tower = function(x,y) {
 	var flei;
 	if(img[x][y].odd==1){flei=1;}else{flei=2;}
-	if(tower[x][y]){return false;}
-	tower[x][y] = Crafty.e("2D, DOM, Image, Tween")
+	if(img[x][y].towered){return false;}
+	if(x==city[1].x & city[1].y==y || x==city[2].x & city[2].y==y){return false;}
+	tower[t_count] = Crafty.e("2D, DOM, Image")
                .attr({ w: Se.w, h: Se.h, x: Se.w*x/1.5, y: Se.h*y+Se.h/flei,type: "tower"})
                 .image("tower.png")
+                .bind('Click',function(e) {
+                	console.log(arg);
+                	clickk(img[x][y]);
+                });
+                img[x][y].towered=true;
                 t_num++;
+                t_count++;
 }
 window.set_city = function(x,y,owner) {
 	var flei;
@@ -249,8 +606,12 @@ window.set_city = function(x,y,owner) {
                 .image(city[owner].self);
 }
 window.stay_tower = function(x,y,owner) {	
-window.set_tower(x,y);
+if(window.set_tower(x,y)==false) {
+	return false;
+}
+else {
 window.draw_city({x:x,y:y,img: city[owner].img,id: owner});
+}
 }
 window.set_mountain = function(mou) {
 aa = mou.split(' ');
@@ -268,19 +629,166 @@ img[parseInt(aa[i])][parseInt(aa[i+1])].type="water";
 img[parseInt(aa[i])][parseInt(aa[i+1])].image("water.png");
 }
 }
-window.read_s = function(co) {
-
-}
-window.read_u = function(co,fg) {
-	var ab;
-if(co%2==0) {ab = goes(1,co,fg,2);}
-else{ab = goes(2,co,fg,1);}
-if(ab!=null){co--;fg++;window.read_u(co,fg);}
-}
 window.cmd = {}
 	window.cmd.init = function() {
 		
 }
+var proc_3 = function(its) {
+	if(turn%2==0) {
+		
+		//if(micro<2) {
+	           if(goed(1,1,its.bn+" "+its.bm,2)!=null){
+	           	micro++;
+	           	if(micro==2){macro++;micro=0;current=null;did=true;
+	           		if(macro==def[1]-city[1].unset){
+	           			micro=0;
+	           			def[1]++;
+	           			def[1]-=off;
+	           			off=0;
+	           			city[1].gennum++;
+	           			macro=0;
+	           			create(1);
+	           			turn++;
+	           			did=true;
+	           			current=null;
+	           		}
+	           	}
+                		//conts[turn] = its.bn+" "+its.bm;
+
+              //city[1].general[city[1].gennum] = Crafty.e("2D, DOM, Image") 
+                            //.attr({ w: Se.w, h: Se.h, x: img[city[1].x][city[1].y].x, y: img[city[1].x][city[1].y].y,type: "general",number: city[1].gennum}) 
+                           //.image("mountain.png");
+                       
+                   //}
+                   else {}
+                       }
+                       else {}
+                       }
+                       else {
+	//  if(macro<=city[current.owner].general.length) {
+		//if(micro<2) {
+	           if(goed(2,1,its.bn+" "+its.bm,1)!=null){
+	           	micro++;
+	           	if(micro==2){macro++;micro=0;current=null;did=true;
+	           		if(macro==def[2]-city[2].unset){
+	           			micro=0;
+	           			def[2]++;
+	           			def[2]-=off;
+	           			off=0;
+	           			macro=0;
+	           			city[2].gennum++;
+	           			create(2);
+	           			turn++;
+	           			did=true;
+	           			current=null;
+	           		}
+	           	}
+                		//conts[turn] = its.bn+" "+its.bm;
+
+              //city[1].general[city[1].gennum] = Crafty.e("2D, DOM, Image") 
+                            //.attr({ w: Se.w, h: Se.h, x: img[city[1].x][city[1].y].x, y: img[city[1].x][city[1].y].y,type: "general",number: city[1].gennum}) 
+                           //.image("mountain.png");
+                      // }
+                 //  }
+                 //  else {macro++;}
+                       }
+                      // else {}
+}
+}
+var go_3 = function(a,b,fg,d) {
+	console.log(cur.bn+""+cur.bm);
+		if(b==0) {
+	return null;
+		}
+		else {
+	c = fg.split(' ');
+	if(parseInt(c[0])==city[1].x & parseInt(c[1])==city[1].y) {
+		console.log("Sorry there is a city");
+		return null;
+	}
+	if(parseInt(c[0])==city[2].x & parseInt(c[1])==city[2].y) {
+		console.log("Sorry there is a city");
+		return null;
+	}
+	//if(img[parseInt(c[0])][parseInt(c[1])].owner==d) {
+	//	console.log("Invalid value");
+		//return null;
+	//}
+	if(img[parseInt(c[0])][parseInt(c[1])].type=="water"|"mountain") {
+		console.log("Mountain or water");
+		return null;
+	}
+
+		if(check_pos(cur.bn,cur.bm,a)!=true){
+			console.log("Validate move");
+return null;
+	}
+if(check_poss(current.bn,current.bm)!=true){
+			console.log("Validate move");
+return null;
+	}
+	if(img[parseInt(c[0])]){
+		if(img[parseInt(c[0])][parseInt(c[1])].towered) {
+			console.log('There is a tower.');
+			return null;
+		}
+	}
+
+	current.x = img[parseInt(c[0])][parseInt(c[1])].x;
+	current.y = img[parseInt(c[0])][parseInt(c[1])].y;
+	current.bn = img[parseInt(c[0])][parseInt(c[1])].bn;
+	current.bm = img[parseInt(c[0])][parseInt(c[1])].bm;
+	return true;
+        }
+}
+
+var goed = function(a,b,fg,d) {
+	console.log(cur.bn+""+cur.bm);
+		if(b==0) {
+	return null;
+		}
+		else {
+	c = fg.split(' ');
+	if(parseInt(c[0])==city[1].x & parseInt(c[1])==city[1].y) {
+		console.log("Sorry there is a city");
+		return null;
+	}
+	if(parseInt(c[0])==city[2].x & parseInt(c[1])==city[2].y) {
+		console.log("Sorry there is a city");
+		return null;
+	}
+	//if(img[parseInt(c[0])][parseInt(c[1])].owner==d) {
+	//	console.log("Invalid value");
+		//return null;
+	//}
+	if(img[parseInt(c[0])][parseInt(c[1])].type=="water"|"mountain") {
+		console.log("Mountain or water");
+		return null;
+	}
+
+		if(check_pos(cur.bn,cur.bm,a)!=true){
+			console.log("Validate move");
+return null;
+	}
+if(check_poss(current.bn,current.bm)!=true){
+			console.log("Validate move");
+return null;
+	}
+	//if(img[parseInt(c[0])]){
+		//if(img[parseInt(c[0])][parseInt(c[1])].towered) {
+			//console.log('There is a tower.');
+			//return null;
+		//}
+	//}
+
+	current.x = img[parseInt(c[0])][parseInt(c[1])].x;
+	current.y = img[parseInt(c[0])][parseInt(c[1])].y;
+	current.bn = img[parseInt(c[0])][parseInt(c[1])].bn;
+	current.bm = img[parseInt(c[0])][parseInt(c[1])].bm;
+	return true;
+        }
+    }
+
 var goes = function(a,b,fg,d) {
 	if(b==0) {
 	return null;
@@ -292,22 +800,27 @@ var goes = function(a,b,fg,d) {
 		console.log("Sorry there is a city");
 		return null;
 	}
-	if(img[parseInt(c[0])][parseInt(c[1])].owner==d) {
-		console.log("Invalid value");
+	if(parseInt(c[0])==city[2].x & parseInt(c[1])==city[2].y) {
+		console.log("Sorry there is a city");
 		return null;
 	}
+	//if(img[parseInt(c[0])][parseInt(c[1])].owner==d) 
+		//console.log("Invalid value");
+		//return null;
+	//}
 	if(img[parseInt(c[0])][parseInt(c[1])].type=="water"|"mountain") {
 		console.log("Mountain or water");
 		return null;
 	}
-	 if(img[parseInt(c[0])][parseInt(c[1])].owner==0) {
+	 //if(img[parseInt(c[0])][parseInt(c[1])].owner==0) {
 		if(check_pos(parseInt(c[0]),parseInt(c[1]),a)!=true){
 			console.log("Validate move");
 return null;
-}
+//}
 	}
-	if(tower[parseInt(c[0])]){
-		if(tower[parseInt(c[0])][parseInt(c[1])]) {
+
+	if(img[parseInt(c[0])]){
+		if(img[parseInt(c[0])][parseInt(c[1])].towered) {
 			console.log('There is a tower.');
 			return null;
 		}
@@ -316,10 +829,81 @@ return null;
 	return true;
         }
     }
+
 window.onload = function() {
 	Crafty.init();
 	window.cmd.init();
 };
+function check_poss(x,y) {
+	if(img[x][y]) {
+
+if(img[x+1]){
+if(img[x+1][y]){
+if(img[x+1][y].bn == cur.bn && img[x+1][y].bm == cur.bm){
+return true;
+}
+}
+}
+if(img[x]){
+if(img[x][y+1]) {
+if(img[x][y+1].bn == cur.bn && img[x][y+1].bm == cur.bm) {
+return true;
+}
+}
+}
+if(img[x]){
+if(img[x][y-1]) {
+	if(img[x][y-1].bn == cur.bn && img[x][y-1].bm == cur.bm) {
+	return true;
+
+}
+}
+}
+if(img[x-1]){
+if(img[x-1][y]) {
+if(img[x-1][y].bn == cur.bn && img[x-1][y].bm == cur.bm) {
+return true;
+}
+}
+}
+if(img[cur.bn][cur.bm].odd==1){
+if(img[x-1]) {
+	if(img[x-1][y-1]) {
+if(img[x-1][y-1].bn == cur.bn && img[x-1][y-1].bm == cur.bm) {
+return true;
+ 		}
+ 		}
+	}
+	if(img[x+1]) {
+if(img[x+1][y-1]) {
+
+if(img[x+1][y-1].bn == cur.bn && img[x+1][y-1].bm == cur.bm) {
+return true;
+	}
+	}
+}
+}
+else if(img[cur.bn][cur.bm].odd==2) {
+if(img[x-1]) {
+	if(img[x-1][y+1]) {
+if(img[x-1][y+1].bn == cur.bn && img[x-1][y+1].bm == cur.bm) {
+return true;
+ 		}
+ 		}
+	}
+if(img[x+1]) {
+if(img[x+1][y+1]) {
+if(img[x+1][y+1].bn == cur.bn && img[x+1][y+1].bm == cur.bm) {
+return true;
+	}
+	}
+}
+	}
+}
+else {
+	return false;
+}
+}
 function check_pos(x,y,a) {
 	if(img[x][y]) {
 
@@ -406,11 +990,10 @@ function commit(obec) {
 	window.set_water(water);
 	window.set_mountain(mount);
 }
-	var ent = Crafty.e('2D, DOM').attr({x: 250, y: 250, w: 100, h: 100});
-	Crafty.viewport.follow(ent,3000);
 	obec.parentNode.parentNode.parentNode.removeChild(obec.parentNode.parentNode);
 	Se.width = parseInt(obec.parentNode.parentNode.children[2].children[0].value);
 	Se.height = parseInt(obec.parentNode.parentNode.children[1].children[0].value);
+	Crafty.viewport.centerOn(img[Math.round(Se.width/2)][Math.round(Se.height/2)],0);
 
 }
 function save(th) {
@@ -434,113 +1017,10 @@ var sip="";
 for(var j=0;j<line.length;j++){
 sip+=line[j]+"\r\n";
 }
-alert(conts[0]);
+alert(sip+gip);
 //var file = new Blob([escape(sip+gip)], {type: "text/plain"});
-th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+escape(sip+gip)+"'download='output.txt'>Download</a>";
+th.parentNode.children[1].innerHTML="<a href='data:text/csv;charset=utf-8,"+escape(sip+gip)+"'download='output.txt'>Çàâàíòàæèòè ôàéë</a>";
+th.parentNode.children[1].style.opacity = 1;
 }
 </script>
-<style>
-* {
-	-webkit-box-selection: none;
-}
-.window {
-	position: fixed;
-	transition: 1s;
-	width: 500px;
-	height: 600px;
-	background: white;
-	left: 36%;
-	-webkit-animation: anim 1s;
-	z-index: 100;
-	box-shadow: 1px 1px 10px lightgrey;
-	top: 0px;
-}
-.but {
-	width: 70%;
-	height: 40px;
-	background: orange;
-	border-radius: 8px;
-	color: #796e58;
-	border: none;
-	font-size: 15px;
-	transition: 0.5s;
-	margin-left: 10px;
-	margin-bottom: 5px;
-	margin-top: 5px;
-}
-.q:hover .but {
-	background: #ffcc6d;
-	width: 90%;
-}
-.but:hover {
-	background: #ffcc6d;
-	width: 90%;
-}
-input {
-	width: 70%;
-	height: 40px;
-	text-align: center;
-}
-select {
-	width: 70%;
-	height: 40px;
-	text-align: center;
-}
-.bd {
--webkit-animation: anims 0.5s;
-}
-@-webkit-keyframes anim {
-	0% {
-		top: -200px;
-	}
-	100% {
-		top: 0;
-	}
-}
-@-webkit-keyframes anims {
-	0% {
-		margin-top: -1000px;
-	}
-	100% {
-		margin-top: 0;
-	}
-}
-.panel {
-	width: 100%;
-    height: 150px;
-    background: rgba(241, 241, 241, 0.44);
-    opacity: 1;
-    position: fixed;
-    font-size: 40px;
-    top: 0;
-    display: inline-block;
-    z-index: 100;
-}
-.type {
-    position: absolute;
-    color: #84bbb1;
-    width: 200px;
-    height: 150px;
-    font-size: 60px;
-    background: #b8e0db;
-    opacity: 1;
-    display: inline-block;
-    font-family: Arial;
-}
-textarea {
-	width: 70%;
-}
-.lio {
-	position:fixed;
-	bottom: 0;
-	width: 100%;
-	z-index: 10;
-	background: rgba(232, 232, 232, 0.44);
-}
-.ou {
-	width: 50px;
-}
-body {
-	margin: 0;
-}
-</style>
+
