@@ -1,4 +1,5 @@
 <head>
+<meta charset="utf-8">
 <meta charset="windows-1251">
 <style>
 .round {
@@ -121,25 +122,40 @@ textarea {
 body {
 	margin: 0;
 }
+#escape{
+	display: inline-block;
+	font-size: 10px;
+}
+#escape img{
+	width: 50px;
+	height: 50px;
+}
 </style>
 </head>
 <div class="panel">
+<div id="escape">
+	<a href="menu.html">
+		
+		<img src="arrowl.png" alt="">
+	</a>
+</div>
+
 <div class="type" style="left: 7%"><p align="center">-</p></div>
 <div class="type" style="left: 80%;color: #de5252;background: #ff6d6d;"><p align="center">-</p></div>
 </div>
 <div class="window">
 <p align="center">Settings</p>
 <p align="center">
-<input type="number" id="width" min='5' placeholder="width"/>
+<input type="number" id="width" min='5' placeholder="КІЛЬКІСТЬ СТОВПЦІВ"/>
 </p>
 <p align="center">
-<input type="number" id="height" min='5' placeholder="height"/>
+<input type="number" id="height" min='5' placeholder="КІЛЬКІСТЬ ДІЛЯНОК У СТОВПЦІ"/>
 </p>
 <p align="center">
-<input type="number" id="length" placeholder="length"/>
+<input type="number" id="length" placeholder="КІЛЬКІСТЬ ХОДІВ"/>
 </p>
 <p align="center">
-<textarea id="cities" placeholder="cities"></textarea>
+<textarea id="cities" placeholder="КООРДИНАТИ МІСТ"></textarea>
 </p>
 <p align="center">
 <select >
@@ -150,10 +166,10 @@ body {
 </select>
 </p>
 <p align="center">
-<textarea id="mountain" placeholder="mountains"></textarea>
+<textarea id="mountain" placeholder="КІЛЬКІСТЬ ТА КООРДИНАТИ ДІЛЯНОК З ГОРАМИ"></textarea>
 </p>
 <p align="center">
-<textarea id="water" placeholder="water"></textarea>
+<textarea id="water" placeholder="КІЛЬКІСТЬ ТА КООРДИНАТИ ДІЛЯНОК З ВОДОЮ"></textarea>
 </p>
 <p align="center">
 <select>
