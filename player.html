@@ -121,12 +121,6 @@ textarea {
 body {
 	margin: 0;
 }
-#mountain{
-display: none;
-}
-#water{
-display: none;
-}
 </style>
 </head>
 <div class="panel">
@@ -151,7 +145,7 @@ display: none;
 <textarea id="cities2" placeholder="city 2"></textarea>
 </p>
 <p align="center">
-<select  id="sel">
+<select >
 <option disabled selected>Режим гри</option>
 <option value='1'>I'm too young to die</option>
 <option value='2'>Hey, not too rough!</option>
@@ -165,7 +159,7 @@ display: none;
 <textarea id="water" placeholder="water"></textarea>
 </p>
 <p align="center">
-<select>
+<select id="sel">
 <option disabled selected>Опонент</option>
 <option value="player">Гравець 2</option>
 <option value="1">Компьютер 1</option>
@@ -177,28 +171,19 @@ display: none;
 <div class="round" onClick="movecamera(event,this)"><div class="rounded"></div></div>
 <div class="lio"><button class="but ou" style="width: 10%" onClick="save(this)">Отримати файл</button><button class="but ou" style="width: 10%;background: lightblue;opacity: 0">Завантажити файл</button></div>
 <script type="text/javascript">
-var sel = document.getElementById("sel");
-
-
-var mou = document.getElementById("mountain");
-var wat = document.getElementById("water");
-sel.onchange = function (){
-	if(this.value == 2 || this.value == 3){
-		console.log(this.value);
-		mou.style.display = "block";
-		wat.style.display = "block";
-	}
-	else{
-				mou.style.display = "none";
-				wat.style.display = "none";
-	}
-}
+var ins=0;
+var pos = {converted: 2};
 var off = 0;
 var fi = 0;
 var conts = [];
 var cur;var current;
 var micro = 0;
 var macro = 0;
+mov = [];
+ 
+ 
+ var mou = document.getElementById("mountain");
+ var wat = document.getElementById("water");
 var def = [];
 def[1]=1;
 def[2]=1;
@@ -207,6 +192,9 @@ var did = true;
 <script src="crafty.js"></script>
 
 <script>
+function generate_tip() {
+
+}
 var movecamera = function(e,th) {
 th.children[0].style.left=e.offsetX+"px";
 th.children[0].style.top=e.offsetY+"px";
@@ -593,7 +581,8 @@ var proc_3 = function(its) {
 		//if(micro<2) {
 	           if(goed(1,1,its.bn+" "+its.bm,2)!=null){
 	           	micro++;
-	           	if(micro==2){macro++;micro=0;current=null;did=true;
+	           	if(micro==1){mov[0]=pos.converted;}
+	           	if(micro==2){macro++;micro=0;did=true;mov[1]=pos.converted;conts[ins]=current.number+" "+mov[0]+" "+mov[1];ins++;current=null;mov[0]=null;mov[1]=null;
 	           		if(macro==def[1]-city[1].unset){
 	           			micro=0;
 	           			def[1]++;
@@ -622,9 +611,10 @@ var proc_3 = function(its) {
                        else {
 	//  if(macro<=city[current.owner].general.length) {
 		//if(micro<2) {
-	           if(goed(2,1,its.bn+" "+its.bm,1)!=null){
+	           if(goed(2,1,its.bn+" "+its.bm,1)!=null){	           	
 	           	micro++;
-	           	if(micro==2){macro++;micro=0;current=null;did=true;
+	           		if(micro==1){mov[0]=pos.converted;}
+	           	if(micro==2){macro++;micro=0;did=true;mov[1]=pos.converted;conts[ins]=current.number+" "+mov[0]+" "+mov[1];ins++;current=null;mov[0]=null;mov[1]=null;
 	           		if(macro==def[2]-city[2].unset){
 	           			micro=0;
 	           			def[2]++;
@@ -792,16 +782,17 @@ window.onload = function() {
 function check_poss(x,y) {
 	if(img[x][y]) {
 
-if(img[x+1]){
-if(img[x+1][y]){
-if(img[x+1][y].bn == cur.bn && img[x+1][y].bm == cur.bm){
-return true;
-}
-}
-}
+//if(img[x+1]){
+//if(img[x+1][y]){
+//if(img[x+1][y].bn == cur.bn && img[x+1][y].bm == cur.bm){
+//return true;
+//}
+//}
+//}
 if(img[x]){
 if(img[x][y+1]) {
 if(img[x][y+1].bn == cur.bn && img[x][y+1].bm == cur.bm) {
+	pos.converted=4;
 return true;
 }
 }
@@ -809,50 +800,96 @@ return true;
 if(img[x]){
 if(img[x][y-1]) {
 	if(img[x][y-1].bn == cur.bn && img[x][y-1].bm == cur.bm) {
+		pos.converted=1;
 	return true;
 
 }
 }
 }
-if(img[x-1]){
-if(img[x-1][y]) {
-if(img[x-1][y].bn == cur.bn && img[x-1][y].bm == cur.bm) {
-return true;
-}
-}
-}
+//if(img[x-1]){
+//if(img[x-1][y]) {
+//if(img[x-1][y].bn == cur.bn && img[x-1][y].bm == cur.bm) {
+//return true;
+//}
+//}
+//}
 if(img[cur.bn][cur.bm].odd==1){
 if(img[x-1]) {
 	if(img[x-1][y-1]) {
 if(img[x-1][y-1].bn == cur.bn && img[x-1][y-1].bm == cur.bm) {
+	pos.converted=6;
 return true;
  		}
  		}
 	}
+
+	if(img[x-1]){
+if(img[x-1][y]) {
+if(img[x-1][y].bn == cur.bn && img[x-1][y].bm == cur.bm) {
+	pos.converted=5;
+return true;
+}
+}
+}
+
 	if(img[x+1]) {
 if(img[x+1][y-1]) {
 
 if(img[x+1][y-1].bn == cur.bn && img[x+1][y-1].bm == cur.bm) {
+	pos.converted=2;
 return true;
 	}
 	}
 }
+
+	if(img[x+1]) {
+if(img[x+1][y]) {
+
+if(img[x+1][y].bn == cur.bn && img[x+1][y].bm == cur.bm) {
+	pos.converted=3;
+return true;
+	}
+	}
+}
+
 }
 else if(img[cur.bn][cur.bm].odd==2) {
 if(img[x-1]) {
 	if(img[x-1][y+1]) {
 if(img[x-1][y+1].bn == cur.bn && img[x-1][y+1].bm == cur.bm) {
+	pos.converted=5;
 return true;
  		}
  		}
 	}
+
+	if(img[x-1]){
+if(img[x-1][y]) {
+if(img[x-1][y].bn == cur.bn && img[x-1][y].bm == cur.bm) {
+	pos.converted=6;
+return true;
+}
+}
+}
+
 if(img[x+1]) {
 if(img[x+1][y+1]) {
 if(img[x+1][y+1].bn == cur.bn && img[x+1][y+1].bm == cur.bm) {
+	pos.converted=3;
 return true;
 	}
 	}
 }
+
+if(img[x+1]) {
+if(img[x+1][y]) {
+if(img[x+1][y].bn == cur.bn && img[x+1][y].bm == cur.bm) {
+	pos.converted=2;
+return true;
+	}
+	}
+}
+
 	}
 }
 else {
@@ -993,7 +1030,8 @@ if(goes(thiss.owner,num,thiss.bn+" "+thiss.bm,-1)==null){
                             	thiss.x=-2000;
                             	//city[n].unset++;
                             	micro=2;
-                           	if(micro==2){macro++;micro=0;current=null;did=true;off++;
+                            	mov[(mov[0]==null ? 0 : 1)]=-1;
+                           	if(micro==2){macro++;micro=0;did=true;off++;conts[ins]=current.number+" "+mov[0]+""+(mov[1]==null ? " " : " "+mov[1]);ins++;current=null;mov[0]=null;mov[1]=null;
 	           		if(macro==def[num]-city[num].unset){
 	           			micro=0;
 	           			def[num]++;
@@ -1019,5 +1057,4 @@ window.onChangeTurn = function() {
 window.Restrict = function() {
 	
 };
-
 </script>
